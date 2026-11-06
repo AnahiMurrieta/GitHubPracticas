@@ -67,32 +67,22 @@
       gap: 1.5rem;
     }
 
-    .logo-contenedor {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--texto-principal);
-    }
+   .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 25px;
+    font-weight: bold;
+    color: #e11d48;
+}
 
-    .logo-icono {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--color-primario), #f59e0b);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.2rem;
-      box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
-    }
+.logo-icon {
+    font-size: 32px;
+}
 
-    .logo-texto {
-      font-size: 1.35rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
+.logo-text {
+    color: #ffffff;
+}
 
     /* Buscador */
     .buscador-contenedor {
@@ -597,13 +587,13 @@
 </head>
 <body>
 
+  
   <!-- Cabecera -->
   <header class="encabezado">
-    <div class="encabezado-contenido">
-      <a href="#" class="logo-contenedor">
-        <div class="logo-icono">🍿</div>
-        <span class="logo-texto">Cinepolis</span>
-      </a>
+   <div class="logo">
+    <span class="logo-icon">🎬</span>
+    <span class="logo-text">CinePremier</span>
+</div>
 
       <!-- Buscador -->
       <div class="buscador-contenedor">
