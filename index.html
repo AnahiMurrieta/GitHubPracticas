@@ -548,6 +548,41 @@
       background-color: var(--color-primario-hover);
     }
 
+    .input-fecha {
+      width: 100%;
+      padding: 0.55rem 0.85rem;
+      background-color: var(--bg-hover);
+      border: 1px solid var(--borde-color);
+      border-radius: 8px;
+      color: var(--texto-principal);
+      font-family: inherit;
+      color-scheme: dark;
+      outline: none;
+    }
+
+    .input-fecha:focus {
+      border-color: var(--color-primario);
+    }
+
+    .btn-opcion {
+      background-color: var(--bg-hover);
+      border: 1px solid var(--borde-color);
+      color: var(--texto-principal);
+      padding: 0.5rem 0.85rem;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transicion);
+    }
+
+    .btn-opcion:hover,
+    .btn-opcion.seleccionado {
+      background-color: var(--color-primario);
+      border-color: var(--color-primario);
+      color: white;
+    }
+
     /* ==========================================================================
        6. PIE DE PÁGINA (Footer)
        ========================================================================== */
@@ -664,10 +699,34 @@
           <span>Clasif: <strong id="modalClasificacion" style="color: var(--texto-principal);"></strong></span>
         </div>
         <p id="modalSinopsis" class="modal-sinopsis"></p>
+
+        <div class="modal-seccion-horarios">
+          <h4>Fecha</h4>
+          <input type="date" id="inputFecha" class="input-fecha">
+        </div>
         
         <div class="modal-seccion-horarios">
           <h4>Selecciona un Horario</h4>
           <div id="modalHorarios" class="modal-horarios-grid"></div>
+        </div>
+
+        <div class="modal-seccion-horarios">
+          <h4>Tipo de película</h4>
+          <div class="modal-horarios-grid">
+            <button type="button" class="btn-opcion" data-grupo="formato" data-valor="2D">2D</button>
+            <button type="button" class="btn-opcion" data-grupo="formato" data-valor="3D">3D</button>
+            <button type="button" class="btn-opcion" data-grupo="formato" data-valor="IMAX">IMAX</button>
+            <button type="button" class="btn-opcion" data-grupo="formato" data-valor="4D">4D</button>
+          </div>
+        </div>
+
+        <div class="modal-seccion-horarios">
+          <h4>Idioma</h4>
+          <div class="modal-horarios-grid">
+            <button type="button" class="btn-opcion" data-grupo="idioma" data-valor="Original">Original</button>
+            <button type="button" class="btn-opcion" data-grupo="idioma" data-valor="Doblado">Doblado</button>
+            <button type="button" class="btn-opcion" data-grupo="idioma" data-valor="Subtitulado">Subtitulado</button>
+          </div>
         </div>
 
         <button id="btnConfirmar" class="btn-comprar">Comprar Boletos</button>
@@ -759,6 +818,8 @@
     let generoSeleccionado = "Todos";
     let textoBusqueda = "";
     let horarioSeleccionado = "";
+    let seleccion = { formato: "", idioma: "" };
+    const inputFecha = document.getElementById("inputFecha");
 
     // Elementos DOM
     const gridPeliculas = document.getElementById("gridPeliculas");
@@ -865,6 +926,20 @@
         <button class="btn-horario" onclick="seleccionarHorario(this, '${h}')">${h}</button>
       `).join('');
 
+      // Reiniciar tipo e idioma al abrir el modal
+      seleccion = { formato: "", idioma: "" };
+      document.querySelectorAll(".btn-opcion").forEach(b => {
+        b.classList.remove("seleccionado");
+      });
+
+      // Fecha: hoy por defecto y sin permitir fechas pasadas
+      const ahora = new Date();
+      const hoy = new Date(ahora.getTime() - ahora.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 10);
+      inputFecha.min = hoy;
+      inputFecha.value = hoy;
+
       modalPelicula.classList.add("activo");
     };
 
@@ -892,12 +967,48 @@
     });
 
     btnConfirmar.addEventListener("click", () => {
+      if (!inputFecha.value) {
+        alert("Por favor selecciona la fecha de tu función.");
+        return;
+      }
+
       if (!horarioSeleccionado) {
         alert("Por favor selecciona un horario para tu función.");
         return;
       }
-      alert(`¡Boletos reservados con éxito para la función de las ${horarioSeleccionado}!`);
+
+      if (!seleccion.formato) {
+        alert("Por favor selecciona el tipo de película (2D, 3D, IMAX o 4D).");
+        return;
+      }
+
+      if (!seleccion.idioma) {
+        alert("Por favor selecciona el idioma (original, doblado o subtitulado).");
+        return;
+      }
+
+      alert(
+        `¡Boletos reservados con éxito!\\n` +
+        `Fecha: ${inputFecha.value}\\n` +
+        `Hora: ${horarioSeleccionado}\\n` +
+        `Tipo: ${seleccion.formato}\\n` +
+        `Idioma: ${seleccion.idioma}`
+      );
+
       cerrarModal();
+    });
+
+    // Seleccionar tipo de película e idioma
+    document.querySelectorAll(".btn-opcion").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const grupo = btn.dataset.grupo;
+
+        document.querySelectorAll(`.btn-opcion[data-grupo="${grupo}"]`)
+          .forEach(b => b.classList.remove("seleccionado"));
+
+        btn.classList.add("seleccionado");
+        seleccion[grupo] = btn.dataset.valor;
+      });
     });
 
     // Inicializar app
